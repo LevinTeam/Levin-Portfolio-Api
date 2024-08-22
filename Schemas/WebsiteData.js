@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
-const WebsiteText = new Schema({
-    Key: {
+const WebsiteData = new Schema({
+    ApiKey: {
         type: String,
         required: true
     },
@@ -18,4 +18,4 @@ const WebsiteText = new Schema({
     }
 })
 
-export default model('WebsiteText', WebsiteText)
+export default model('WebsiteText', WebsiteData)
