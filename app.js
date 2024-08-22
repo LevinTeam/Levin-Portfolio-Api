@@ -1,5 +1,6 @@
 // Import Packages
 import express from "express";
+import cookieParser from "cookie-parser";
 import { config } from "dotenv"; config();
 
 // Import Modules
@@ -16,7 +17,7 @@ import CrashHandler from "./Handlers/CrashHandler.js";
 import Data from "./Routes/Data.js"
 
 // Port Setting
-const API_PORT = Config.Port || 3001 || 3002
+const Port = Config.Port || 3001 || 3002
 
 // Main Code
 const app = express()
@@ -27,7 +28,11 @@ await CrashHandler.Load()
 // Connect to Database
 await DatabaseHandler.Start()
 
+// Use and Support JSON Responses
 app.use(express.json())
+
+// Parse Cookies
+app.use(cookieParser())
 
 // Deploy Api Routes
 app.use(`/api/${Config.ApiVersion}/data`, Data)
@@ -40,4 +45,4 @@ app.get(`/api/${Config.ApiVersion}/status`, (req, res) => {
 })
 
 // Run API on Port
-Listen(app, API_PORT)
+Listen(app, Port)

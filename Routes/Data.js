@@ -1,8 +1,12 @@
 // Import Packages
 import express from "express";
+import csurf from "csurf";
 
 // Import Package Classes
 const Router = express.Router();
+
+// Middleware
+const CSRFProtection = csurf({ cookie: true })
 
 // Import Config File
 import Config from "../Configs/Config.json" assert { type: "json" }
@@ -15,7 +19,7 @@ import Notification from "../Modules/Notification.js";
 const Data = new Database();
 
 // GET Website texts from database and return it to Front-End side
-Router.get('/', async (req, res, next) => {
+Router.get('/', CSRFProtection, async (req, res, next) => {
     const {ApiKey} = req.body
 
     const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
