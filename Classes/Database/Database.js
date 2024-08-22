@@ -11,6 +11,7 @@ import WebsiteData from "../../Schemas/WebsiteData.js";
 
 // Import Websites Texts Documention (include all website texts)
 import Website from "../../Docs/Website/Website.js"
+import Users from "../../Schemas/Users.js";
 
 
 export default class Database {
@@ -34,10 +35,38 @@ export default class Database {
 
     async CreateUser(ApiKey, { FirstName: FirstName, LastName: LastName, PhoneNumber: PhoneNumber, Password: Password }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
+        const UserData = Users.findOne({PhoneNumber: PhoneNumber})
         if (VerifyAction == true) {
-            
-        } else {
+            if (!UserData) {
+                const Data = new Users({
+                    FirstName: FirstName,
+                    LastName: LastName,
+                    PhoneNumber: PhoneNumber,
+                    Password: (await PasswordProtection.ReGeneratePassword(Password))
+                })
 
+                Data.save().then(async e => {
+                    return {
+                        DatabaseMessage: `✅ User Account ${PhoneNumber} Has Been Created Successfully`,
+                        DatabaseAction: null
+                    }
+                }).catch(async err => {
+                    return {
+                        DatabaseMessage: `❌ An Error Happend When Creating ${PhoneNumber} User, ERROR: ${err}`,
+                        DatabaseAction: null
+                    }
+                })
+            } else {
+                return {
+                    DatabaseMessage: `User Account ${PhoneNumber} Registred Before, Please Login`,
+                    DatabaseAction: `Login`
+                }
+            }
+        } else {
+            return {
+                DatabaseMessage: `Cannot Verify ApiKey`,
+                DatabaseAction: `Verify`
+            }
         }
     }
 
