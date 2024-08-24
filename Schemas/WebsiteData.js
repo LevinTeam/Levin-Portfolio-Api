@@ -18,4 +18,4 @@ const WebsiteData = new Schema({
     }
 })
 
-export default model('WebsiteText', WebsiteData)
+export default model('WebsiteData', WebsiteData)

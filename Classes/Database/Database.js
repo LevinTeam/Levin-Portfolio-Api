@@ -6,12 +6,12 @@ import { connect } from "mongoose";
 import Notification from "../../Modules/Notification.js";
 import PasswordProtection from "../PasswordProtection/PasswordProtection.js";
 
-// Import Website Schema
+// Import Databases Schemas
 import WebsiteData from "../../Schemas/WebsiteData.js";
+import Users from "../../Schemas/Users.js";
 
 // Import Websites Texts Documention (include all website texts)
 import Website from "../../Docs/Website/Website.js"
-import Users from "../../Schemas/Users.js";
 
 
 export default class Database {
@@ -35,7 +35,7 @@ export default class Database {
 
     async CreateUser(ApiKey, { FirstName: FirstName, LastName: LastName, PhoneNumber: PhoneNumber, Password: Password }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
-        const UserData = Users.findOne({PhoneNumber: PhoneNumber})
+        const UserData = await Users.findOne({PhoneNumber: PhoneNumber})
         if (VerifyAction == true) {
             if (!UserData) {
                 const Data = new Users({
@@ -60,6 +60,50 @@ export default class Database {
                 return {
                     DatabaseMessage: `User Account ${PhoneNumber} Registred Before, Please Login`,
                     DatabaseAction: `Login`
+                }
+            }
+        } else {
+            return {
+                DatabaseMessage: `Cannot Verify ApiKey`,
+                DatabaseAction: `Verify`
+            }
+        }
+    }
+
+    async LoginUser(ApiKey, { PhoneNumber: PhoneNumber, Password: Password, OTP: OTP }) {
+        const VerifyAction = await this.#VerifyApiKey(ApiKey)
+        const UserData = await Users.findOne({PhoneNumber: PhoneNumber})
+        const CheckPassword = await PasswordProtection.ComparePassword(Password, UserData.Password)
+        if (VerifyAction == true) {
+            if (UserData) {
+                if (OTP) {
+                    return {
+                        DatabaseMessage: `OTP Verfication Option Disabled`,
+                        DatabaseAction: `OTP_Failed`
+                    }
+                } else {
+                    if (UserData.Password === CheckPassword) {
+                        return {
+                            DatabaseMessage: `User ${PhoneNumber} Has Been Successfully Logined into Account`,
+                            DatabaseAction: `Logined`,
+                            DatabaseOptionalData: {
+                                UserPhoneNumber: UserData.PhoneNumber,
+                                UserFirstName: UserData.FirstName,
+                                UserLastName: UserData.LastName,
+                                UserFullName: `${UserData.FirstName} ${UserData.LastName}`
+                            }
+                        }
+                    } else {
+                        return {
+                            DatabaseMessage: `Password is Incorrect`,
+                            DatabaseAction: `Login_Failed`
+                        }
+                    }
+                }
+            } else {
+                return {
+                    DatabaseMessage: `User Account ${PhoneNumber} Not Registred Yet, Please Sign up`,
+                    DatabaseAction: `Signup`
                 }
             }
         } else {
