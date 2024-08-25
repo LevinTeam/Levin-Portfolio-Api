@@ -36,34 +36,58 @@ export default class Database {
     async CreateUser(ApiKey, { FirstName: FirstName, LastName: LastName, PhoneNumber: PhoneNumber, Password: Password }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
         const UserData = await Users.findOne({PhoneNumber: PhoneNumber})
+        const ReGeneratedPassword = await PasswordProtection.ReGeneratePassword(Password)
         if (VerifyAction == true) {
             if (!UserData) {
-                const Data = new Users({
+                const Data = await new Users({
                     FirstName: FirstName,
                     LastName: LastName,
                     PhoneNumber: PhoneNumber,
-                    Password: (await PasswordProtection.ReGeneratePassword(Password))
+                    Password: ReGeneratedPassword
                 })
 
-                Data.save().then(async e => {
+                await Data.save().catch(async err => {
                     return {
-                        DatabaseMessage: `✅ User Account ${PhoneNumber} Has Been Created Successfully`,
-                        DatabaseAction: null
-                    }
-                }).catch(async err => {
-                    return {
+                        Status: {
+                            Code: 500,
+                            Message: 'Failed'
+                        },
                         DatabaseMessage: `❌ An Error Happend When Creating ${PhoneNumber} User, ERROR: ${err}`,
                         DatabaseAction: null
                     }
                 })
+
+                return {
+                    Status: {
+                        Code: 201,
+                        Message: 'Created'
+                    },
+                    UserData: {
+                        UserPhoneNumber: PhoneNumber,
+                        UserFirstName: FirstName,
+                        UserLastName: LastName,
+                        UserFullName: `${FirstName} ${LastName}`
+                    },
+                    DatabaseMessage: `✅ User Account ${PhoneNumber} Has Been Created Successfully`,
+                    DatabaseAction: null
+                }
+
             } else {
                 return {
+                    Status: {
+                        Code: 400,
+                        Message: 'ShouldLogin'
+                    },
                     DatabaseMessage: `User Account ${PhoneNumber} Registred Before, Please Login`,
                     DatabaseAction: `Login`
                 }
             }
         } else {
             return {
+                Status: {
+                    Code: 503,
+                    Message: 'CantVerifyApiKey'
+                },
                 DatabaseMessage: `Cannot Verify ApiKey`,
                 DatabaseAction: `Verify`
             }
@@ -115,9 +139,9 @@ export default class Database {
     }
 
     async #VerifyApiKey(ApiKey) {
-        const WebsiteData = await WebsiteData.findOne({DataAvailability: 1})
+        const Data = await WebsiteData.findOne({DataAvailability: 1})
 
-        const ComparedApiKey = await PasswordProtection.ComparePassword(WebsiteData.ApiKey, ApiKey)
+        const ComparedApiKey = await PasswordProtection.ComparePassword(Data.ApiKey, ApiKey)
 
         if (ComparedApiKey == true) return true
 

@@ -26,4 +26,11 @@ const Users = new Schema({
     }
 })
 
+Users.statics.isPhoneNumberEnable = async (PhoneNumber) => {
+    const Status = await this.findOne({PhoneNumber})
+
+    if (Status) return false
+    return true;
+}
+
 export default model('Users', Users)

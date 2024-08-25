@@ -14,7 +14,7 @@ import DatabaseHandler from "./Handlers/Database.js";
 import CrashHandler from "./Handlers/CrashHandler.js";
 
 // Import Routes
-import Handler from "./Routes/Handler.js"
+import User from "./Routes/User.js"
 
 // Port Setting
 const Port = Config.Port || 3001 || 3002
@@ -35,7 +35,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 // Deploy Api Routes
-app.use(`/api/${Config.ApiVersion}/handler`, Handler)
+app.use(`/api/${Config.ApiVersion}/user`, User)
 
 // GET Status Of API Started or Not
 app.get(`/api/${Config.ApiVersion}/status`, (req, res) => {
