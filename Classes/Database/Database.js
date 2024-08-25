@@ -9,6 +9,7 @@ import PasswordProtection from "../PasswordProtection/PasswordProtection.js";
 // Import Databases Schemas
 import WebsiteData from "../../Schemas/WebsiteData.js";
 import Users from "../../Schemas/Users.js";
+import Comments from "../../Schemas/Comments.js";
 
 // Import Websites Texts Documention (include all website texts)
 import Website from "../../Docs/Website/Website.js"
@@ -148,7 +149,11 @@ export default class Database {
     }
 
     async SaveComment(ApiKey, { Name: Name, PhoneNumber: PhoneNumber, Email: Email, Subject: Subject, CommentMessage: CommentMessage }) {
+        const VerifyAction = await this.#VerifyApiKey(ApiKey)
 
+        if (VerifyAction == true) {
+
+        }
     }
 
     async #VerifyApiKey(ApiKey) {
