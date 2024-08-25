@@ -102,6 +102,10 @@ export default class Database {
             if (UserData) {
                 if (OTP) {
                     return {
+                        Status: {
+                            Code: 500,
+                            Message: 'Failed'
+                        },
                         DatabaseMessage: `OTP Verfication Option Disabled`,
                         DatabaseAction: `OTP_Failed`
                     }
@@ -115,10 +119,18 @@ export default class Database {
                                 UserFirstName: UserData.FirstName,
                                 UserLastName: UserData.LastName,
                                 UserFullName: `${UserData.FirstName} ${UserData.LastName}`
+                            },
+                            Status: {
+                                Code: 500,
+                                Message: 'Failed'
                             }
                         }
                     } else {
                         return {
+                            Status: {
+                                Code: 500,
+                                Message: 'Failed'
+                            },
                             DatabaseMessage: `Password is Incorrect`,
                             DatabaseAction: `Login_Failed`
                         }
@@ -126,6 +138,10 @@ export default class Database {
                 }
             } else {
                 return {
+                    Status: {
+                        Code: 500,
+                        Message: 'Failed'
+                    },
                     DatabaseMessage: `User Account ${PhoneNumber} Not Registred Yet, Please Sign up`,
                     DatabaseAction: `Signup`
                 }
