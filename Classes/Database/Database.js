@@ -152,7 +152,43 @@ export default class Database {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
 
         if (VerifyAction == true) {
+            if (PhoneNumber || Email) {
+                const Data = await new Comments({
+                    Name: Name,
+                    PhoneNumber: String(PhoneNumber),
+                    Email: String(Email),
+                    Subject: String(Subject),
+                    CommentMessage: String(CommentMessage)
+                })
 
+                Data.save().catch((e) => {
+                    return {
+                        Status: {
+                            Code: 500,
+                            Message: 'Failed'
+                        },
+                        DatabaseMessage: `❌ An Error Happend When Creating ${PhoneNumber, Email} User Comment, ERROR: ${e}`,
+                        DatabaseAction: null
+                    }
+                })
+
+                return {
+                    Status: {
+                        Code: 201,
+                        Message: 'CommentCreated'
+                    },
+                    CommentData: {
+                        Name: Name,
+                        PhoneNumber: String(PhoneNumber),
+                        Email: String(Email),
+                        Subject: String(Subject),
+                        CommentMessage: String(CommentMessage)
+                    },
+                    DatabaseMessage: `User With Email: ${Email} and Phone number ${PhoneNumber}, Created a Comment`,
+                    DatabaseAction: null
+                }
+
+            }
         }
     }
 
