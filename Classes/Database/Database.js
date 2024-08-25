@@ -97,9 +97,9 @@ export default class Database {
     async LoginUser(ApiKey, { PhoneNumber: PhoneNumber, Password: Password }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
         const UserData = await Users.findOne({PhoneNumber: PhoneNumber})
-        const CheckPassword = await PasswordProtection.ComparePassword(Password, UserData.Password)
         if (VerifyAction == true) {
             if (UserData) {
+                const CheckPassword = await PasswordProtection.ComparePassword(Password, UserData.Password)
                 if (CheckPassword == true) {
                     return {
                         DatabaseMessage: `User ${PhoneNumber} Has Been Successfully Logined into Account`,
