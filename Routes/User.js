@@ -19,7 +19,7 @@ import Notification from "../Modules/Notification.js";
 
 const Data = new Database();
 
-// GET Website texts from database and return it to Front-End side
+// POST user data and create user account and return user saved info to Front-end side
 Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) => {
     const {ApiKey, FirstName, LastName, PhoneNumber, Password} = req.body
 
