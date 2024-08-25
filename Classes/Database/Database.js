@@ -147,6 +147,10 @@ export default class Database {
 
     }
 
+    async SaveComment(ApiKey, { Name: Name, PhoneNumber: PhoneNumber, Email: Email, Subject: Subject, CommentMessage: CommentMessage }) {
+
+    }
+
     async #VerifyApiKey(ApiKey) {
         const Data = await WebsiteData.findOne({DataAvailability: 1})
 
