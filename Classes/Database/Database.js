@@ -94,56 +94,45 @@ export default class Database {
         }
     }
 
-    async LoginUser(ApiKey, { PhoneNumber: PhoneNumber, Password: Password, OTP: OTP }) {
+    async LoginUser(ApiKey, { PhoneNumber: PhoneNumber, Password: Password }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
         const UserData = await Users.findOne({PhoneNumber: PhoneNumber})
         const CheckPassword = await PasswordProtection.ComparePassword(Password, UserData.Password)
         if (VerifyAction == true) {
             if (UserData) {
-                if (OTP) {
+                if (CheckPassword == true) {
                     return {
-                        Status: {
-                            Code: 500,
-                            Message: 'Failed'
+                        DatabaseMessage: `User ${PhoneNumber} Has Been Successfully Logined into Account`,
+                        DatabaseAction: `Logined`,
+                        DatabaseOptionalData: {
+                            UserPhoneNumber: UserData.PhoneNumber,
+                            UserFirstName: UserData.FirstName,
+                            UserLastName: UserData.LastName,
+                            UserFullName: `${UserData.FirstName} ${UserData.LastName}`
                         },
-                        DatabaseMessage: `OTP Verfication Option Disabled`,
-                        DatabaseAction: `OTP_Failed`
+                        Status: {
+                            Code: 200,
+                            Message: 'Loggined'
+                        }
                     }
                 } else {
-                    if (UserData.Password === CheckPassword) {
-                        return {
-                            DatabaseMessage: `User ${PhoneNumber} Has Been Successfully Logined into Account`,
-                            DatabaseAction: `Logined`,
-                            DatabaseOptionalData: {
-                                UserPhoneNumber: UserData.PhoneNumber,
-                                UserFirstName: UserData.FirstName,
-                                UserLastName: UserData.LastName,
-                                UserFullName: `${UserData.FirstName} ${UserData.LastName}`
-                            },
-                            Status: {
-                                Code: 500,
-                                Message: 'Failed'
-                            }
-                        }
-                    } else {
-                        return {
-                            Status: {
-                                Code: 500,
-                                Message: 'Failed'
-                            },
-                            DatabaseMessage: `Password is Incorrect`,
-                            DatabaseAction: `Login_Failed`
+                    return {
+                        DatabaseMessage: `Password is Incorrect`,
+                        DatabaseAction: `Login_Failed`,
+                        Status: {
+                            Code: 404,
+                            Message: 'PasswordIncorrect'
                         }
                     }
                 }
             } else {
                 return {
-                    Status: {
-                        Code: 500,
-                        Message: 'Failed'
-                    },
                     DatabaseMessage: `User Account ${PhoneNumber} Not Registred Yet, Please Sign up`,
-                    DatabaseAction: `Signup`
+                    DatabaseAction: `Signup`,
+                    Status: {
+                        Code: 400,
+                        Message: 'ShouldSignup'
+                    }
                 }
             }
         } else {
