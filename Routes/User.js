@@ -132,13 +132,19 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
                         }
                     })
                 } else {
-
+                    res.status(404).json({
+                        Data: `Passowrd length should be between 5 and 100 characters.`
+                    })
                 }
             } else {
-
+                res.status(404).json({
+                    Data: `Phone number should be between 10 and 13 characters.`
+                })
             }
         } else {
-
+            res.status(404).json({
+                Data: `Types of all parameters should be string.`
+            })
         }
     }
 })
