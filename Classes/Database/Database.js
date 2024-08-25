@@ -143,6 +143,10 @@ export default class Database {
         }
     }
 
+    async ForgotPassword(ApiKey, {PhoneNumber: PhoneNumber, OTP: OTP}) {
+
+    }
+
     async #VerifyApiKey(ApiKey) {
         const Data = await WebsiteData.findOne({DataAvailability: 1})
 
