@@ -37,7 +37,6 @@ Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) =>
                                 PhoneNumber: PhoneNumber,
                                 Password: Password
                             }).then(async message => {
-                                await console.log(message)
                                 switch (message.Status.Code) {
                                     case 201:
                                         res.status(201).json({
@@ -109,7 +108,6 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
                         PhoneNumber: PhoneNumber,
                         Password: Password
                     }).then(async message => {
-                        await console.log(message)
                         switch (message.Status.Code) {
                             case 200:
                                 res.status(200).json({
@@ -141,6 +139,88 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
             }
         } else {
 
+        }
+    }
+})
+
+// POST user comment and save it into database
+Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, next) => {
+    const {ApiKey, Name, PhoneNumber, Email, Subject, CommentMessage} = req.body
+
+    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
+
+    if (CompareApiKey == true) {
+        if ((typeof Name && typeof Subject && typeof CommentMessage) == "string") {
+            if (PhoneNumber || Email) {
+                if ((typeof PhoneNumber && typeof Email) == "string") {
+                    if (Name.length >= 3 && Name.length <= 20) {
+                        if ((PhoneNumber.length >= 10 && PhoneNumber.length <= 13) || (Email.length >= 6 && Email.length <= 50)) {
+                            if ((Email) && (Email.includes("@gmail.com") || Email.includes("@yahoo.com") || Email.includes("@outlook.com"))) {
+                                if (Subject.length >= 4 && Subject.length <= 50) {
+                                    if (CommentMessage.length >= 20 && CommentMessage.length <= 1000) {
+                                        await Data.SaveComment(ApiKey, {
+                                            Name: Name,
+                                            PhoneNumber: PhoneNumber,
+                                            Email: Email,
+                                            Subject: Subject,
+                                            CommentMessage: CommentMessage
+                                        }).then(async message => {
+                                            switch (message.Status.Code) {
+                                                case 201:
+                                                    res.status(201).json({
+                                                        Data: `Comment Created`,
+                                                        CommentData: message.CommentData
+                                                    })
+                                                break;
+
+                                                case 500:
+                                                    res.status(500).json({
+                                                        Data: `An Error happened when Creatgin Comment.`
+                                                    })
+                                                break;
+
+                                                default:break;
+                                            }
+                                        })
+                                    } else {
+                                        res.status(404).json({
+                                            Data: `Comment Message should be between 20 and 1000 characters.`
+                                        })
+                                    }
+                                } else {
+                                    res.status(404).json({
+                                        Data: `Subject should be between 4 and 50 characters.`
+                                    })
+                                }
+                            } else {
+                                res.status(404).json({
+                                    Data: `Email is incorrect.`
+                                })
+                            }
+                        } else {
+                            res.status(404).json({
+                                Data: `Phone number should be between 10 and 13 characters and Email should be between 6 and 50 characters.`
+                            })
+                        }
+                    } else {
+                        res.status(404).json({
+                            Data: `Name should be between 3 and 20 characters.`
+                        })
+                    }
+                } else {
+                    res.status(404).json({
+                        Data: `Types of all parameters should be string.`
+                    })
+                }
+            } else {
+                res.status(404).json({
+                    Data: `Email OR Phone Number is required.`
+                })
+            }
+        } else {
+            res.status(404).json({
+                Data: `Types of all parameters should be string.`
+            })
         }
     }
 })
