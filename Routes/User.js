@@ -111,28 +111,22 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
                     }).then(async message => {
                         await console.log(message)
                         switch (message.Status.Code) {
-                            case 201:
-                                res.status(201).json({
-                                    Data: `Account successfully created, Phone number: ${PhoneNumber}.`,
-                                    UserData: message.UserData
+                            case 200:
+                                res.status(200).json({
+                                    Data: `Login Successfull, Phone number: ${PhoneNumber}.`,
+                                    UserData: message.DatabaseOptionalData
                                 })
                             break;
 
-                            case 500:
-                                res.status(500).json({
-                                    Data: `An Error happened when creating ${PhoneNumber} Account.`
+                            case 404:
+                                res.status(404).json({
+                                    Data: `Password for ${PhoneNumber} Number is incorrect.`
                                 })
                             break;
 
                             case 400:
                                 res.status(400).json({
-                                    Data: `Account with Number -> ${PhoneNumber}, has been registred before.`
-                                })
-                            break;
-
-                            case 503:
-                                res.status(503).json({
-                                    Data: `An Error happened when verifying API Key.`
+                                    Data: `Account with Number -> ${PhoneNumber}, not registred before.`
                                 })
                             break;
 
