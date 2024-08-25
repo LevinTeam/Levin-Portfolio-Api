@@ -26,42 +26,72 @@ Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) =>
     const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
 
     if (CompareApiKey == true) {
-        await Data.CreateUser(Config.Key, {
-            FirstName: FirstName,
-            LastName: LastName,
-            PhoneNumber: PhoneNumber,
-            Password: Password
-        }).then(async message => {
-            await console.log(message)
-            switch (message.Status.Code) {
-                case 201:
-                    res.status(201).json({
-                        Data: `Account successfully created, Phone number: ${PhoneNumber}.`,
-                        UserData: message.UserData
-                    })
-                break;
+        if ((typeof FirstName && typeof LastName && typeof PhoneNumber && typeof Password) == "string") {
+            if (FirstName.length >= 3 && FirstName.length <= 20) {
+                if (LastName.length >= 3 && LastName.length <= 20) {
+                    if (PhoneNumber.length >= 10 && PhoneNumber.length <= 13) {
+                        if (Password.length >= 5 && Password.length <= 100) {
+                            await Data.CreateUser(Config.Key, {
+                                FirstName: FirstName,
+                                LastName: LastName,
+                                PhoneNumber: PhoneNumber,
+                                Password: Password
+                            }).then(async message => {
+                                await console.log(message)
+                                switch (message.Status.Code) {
+                                    case 201:
+                                        res.status(201).json({
+                                            Data: `Account successfully created, Phone number: ${PhoneNumber}.`,
+                                            UserData: message.UserData
+                                        })
+                                    break;
 
-                case 500:
-                    res.status(500).json({
-                        Data: `An Error happened when creating ${PhoneNumber} Account.`
-                    })
-                break;
+                                    case 500:
+                                        res.status(500).json({
+                                            Data: `An Error happened when creating ${PhoneNumber} Account.`
+                                        })
+                                    break;
 
-                case 400:
+                                    case 400:
+                                        res.status(400).json({
+                                            Data: `Account with Number -> ${PhoneNumber}, has been registred before.`
+                                        })
+                                    break;
+
+                                    case 503:
+                                        res.status(503).json({
+                                            Data: `An Error happened when verifying API Key.`
+                                        })
+                                    break;
+
+                                    default:break;
+                                }
+                            })
+                        } else {
+                            res.status(400).json({
+                                Data: `Password Length should be between 5 and 100 characters`,
+                            })
+                        }
+                    } else {
+                        res.status(400).json({
+                            Data: `Phone number Length should be between 10 and 13 characters`,
+                        })
+                    }
+                } else {
                     res.status(400).json({
-                        Data: `Account with Number -> ${PhoneNumber}, has been registred before.`
+                        Data: `Lastname Length should be between 3 and 20 characters`,
                     })
-                break;
-
-                case 503:
-                    res.status(503).json({
-                        Data: `An Error happened when verifying API Key.`
-                    })
-                break;
-
-                default:break;
+                }
+            } else {
+                res.status(400).json({
+                    Data: `Firstname Length should be between 3 and 20 characters`,
+                })
             }
-        })
+        } else {
+            res.status(400).json({
+                Data: `Type of parameters is incorrect`,
+            })
+        }
     }
 })
 
