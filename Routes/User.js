@@ -159,7 +159,7 @@ Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, 
         if ((typeof Name && typeof Subject && typeof CommentMessage) == "string") {
             if (PhoneNumber || Email) {
                 if ((typeof PhoneNumber && typeof Email) == "string") {
-                    if (Name.length >= 3 && Name.length <= 20) {
+                    if (Name.length >= 3 && Name.length <= 30) {
                         if ((PhoneNumber.length >= 10 && PhoneNumber.length <= 13) || (Email.length >= 6 && Email.length <= 50)) {
                             if ((Email) && (Email.includes("@gmail.com") || Email.includes("@yahoo.com") || Email.includes("@outlook.com"))) {
                                 if (Subject.length >= 4 && Subject.length <= 50) {
@@ -210,7 +210,7 @@ Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, 
                         }
                     } else {
                         res.status(404).json({
-                            Data: `Name should be between 3 and 20 characters.`
+                            Data: `Name should be between 3 and 30 characters.`
                         })
                     }
                 } else {
