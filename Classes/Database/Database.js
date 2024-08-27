@@ -13,6 +13,7 @@ import Comments from "../../Schemas/Comments.js";
 
 // Import Websites Texts Documention (include all website texts)
 import Website from "../../Docs/Website/Website.js"
+import CommentID from "../../Modules/CommentID.js";
 
 
 export default class Database {
@@ -150,10 +151,11 @@ export default class Database {
 
     async SaveComment(ApiKey, { Name: Name, PhoneNumber: PhoneNumber, Email: Email, Subject: Subject, CommentMessage: CommentMessage }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
-
+        const GeneratedCommentID = CommentID(1, 10000)
         if (VerifyAction == true) {
             if (PhoneNumber || Email) {
                 const Data = await new Comments({
+                    CommentID: GeneratedCommentID,
                     Name: Name,
                     PhoneNumber: String(PhoneNumber),
                     Email: String(Email),
@@ -178,6 +180,7 @@ export default class Database {
                         Message: 'CommentCreated'
                     },
                     CommentData: {
+                        CommentID: GeneratedCommentID,
                         Name: Name,
                         PhoneNumber: String(PhoneNumber),
                         Email: String(Email),
