@@ -1,6 +1,11 @@
 import { Schema, model } from "mongoose";
 
 const Comments = new Schema({
+    CommentID: {
+        type: Number,
+        required: true
+    },
+
     Name: {
         type: String,
         required: true,
