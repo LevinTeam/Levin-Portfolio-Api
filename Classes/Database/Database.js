@@ -152,18 +152,19 @@ export default class Database {
     async SaveComment(ApiKey, { Name: Name, PhoneNumber: PhoneNumber, Email: Email, Subject: Subject, CommentMessage: CommentMessage }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
         const GeneratedCommentID = CommentID(1, 10000)
+
         if (VerifyAction == true) {
             if (PhoneNumber || Email) {
                 const Data = await new Comments({
-                    CommentID: GeneratedCommentID,
-                    Name: Name,
+                    CommentID: Number(GeneratedCommentID),
+                    Name: String(Name),
                     PhoneNumber: String(PhoneNumber),
                     Email: String(Email),
                     Subject: String(Subject),
-                    CommentMessage: String(CommentMessage)
+                    Comment: String(CommentMessage)
                 })
 
-                Data.save().catch((e) => {
+                Data.save().catch(e => {
                     return {
                         Status: {
                             Code: 500,

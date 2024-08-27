@@ -152,22 +152,21 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
 // POST user comment and save it into database
 Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, next) => {
     const {ApiKey, Name, PhoneNumber, Email, Subject, CommentMessage} = req.body
-
     const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
 
     if (CompareApiKey == true) {
         if ((typeof Name && typeof Subject && typeof CommentMessage) == "string") {
             if (PhoneNumber || Email) {
-                if ((typeof PhoneNumber && typeof Email) == "string") {
+                if ((typeof PhoneNumber || typeof Email) == "string") {
                     if (Name.length >= 3 && Name.length <= 30) {
                         if ((PhoneNumber.length >= 10 && PhoneNumber.length <= 13) || (Email.length >= 6 && Email.length <= 50)) {
-                            if ((Email) && (Email.includes("@gmail.com") || Email.includes("@yahoo.com") || Email.includes("@outlook.com"))) {
+                            if ((Email !== undefined) || (Email == undefined)) {
                                 if (Subject.length >= 4 && Subject.length <= 50) {
                                     if (CommentMessage.length >= 20 && CommentMessage.length <= 1000) {
-                                        await Data.SaveComment(ApiKey, {
+                                        await Data.SaveComment(Config.Key, {
                                             Name: Name,
                                             PhoneNumber: PhoneNumber,
-                                            Email: Email,
+                                            Email: (Email?.includes("@gmail.com") || Email?.includes("@yahoo.com") || Email?.includes("@outlook.com")) ? Email : Email,
                                             Subject: Subject,
                                             CommentMessage: CommentMessage
                                         }).then(async message => {
