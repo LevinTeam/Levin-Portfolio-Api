@@ -1,9 +1,11 @@
 // Import Package Modules
 import chalk from "chalk";
 import { connect } from "mongoose";
+import JWT from "jsonwebtoken";
 
-// Import Modules
+// Import Modules and Classes
 import Notification from "../../Modules/Notification.js";
+import CommentID from "../../Modules/CommentID.js";
 import PasswordProtection from "../PasswordProtection/PasswordProtection.js";
 
 // Import Databases Schemas
@@ -13,8 +15,12 @@ import Comments from "../../Schemas/Comments.js";
 
 // Import Websites Texts Documention (include all website texts)
 import Website from "../../Docs/Website/Website.js"
-import CommentID from "../../Modules/CommentID.js";
 
+// Import Configs
+import Config from "../../Configs/Config.json" assert { type: "json" }
+
+// Import JSON Web Tokens methods
+const { sign, verify } = JWT
 
 export default class Database {
 
@@ -70,6 +76,12 @@ export default class Database {
                         UserLastName: LastName,
                         UserFullName: `${FirstName} ${LastName}`
                     },
+                    UserToken: (await this.#GetUserToken({
+                        PhoneNumber: UserData.PhoneNumber,
+                        FirstName: UserData.FirstName,
+                        LastName: UserData.LastName,
+                        FullName: `${UserData.FirstName} ${UserData.LastName}`
+                    })),
                     DatabaseMessage: `✅ User Account ${PhoneNumber} Has Been Created Successfully`,
                     DatabaseAction: null
                 }
@@ -106,6 +118,12 @@ export default class Database {
                     return {
                         DatabaseMessage: `User ${PhoneNumber} Has Been Successfully Logined into Account`,
                         DatabaseAction: `Logined`,
+                        UserToken: (await this.#GetUserToken({
+                            PhoneNumber: UserData.PhoneNumber,
+                            FirstName: UserData.FirstName,
+                            LastName: UserData.LastName,
+                            FullName: `${UserData.FirstName} ${UserData.LastName}`
+                        })),
                         DatabaseOptionalData: {
                             UserPhoneNumber: UserData.PhoneNumber,
                             UserFirstName: UserData.FirstName,
@@ -190,6 +208,17 @@ export default class Database {
 
             }
         }
+    }
+
+    async #GetUserToken({PhoneNumber: PhoneNumber, FirstName: FirstName, LastName: LastName, FullName: FullName}) {
+        const UserDataToken = await sign({
+            UserPhoneNumber: PhoneNumber,
+            UserFirstName: FirstName,
+            UserLastName: LastName,
+            UserFullName: FullName
+        }, Config.Key)
+
+        return UserDataToken
     }
 
     async #VerifyApiKey(ApiKey) {
