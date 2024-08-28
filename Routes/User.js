@@ -41,7 +41,8 @@ Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) =>
                                     case 201:
                                         res.status(201).json({
                                             Data: `Account successfully created, Phone number: ${PhoneNumber}.`,
-                                            UserData: message.UserData
+                                            UserData: message.UserData,
+                                            UserToken: message.UserToken
                                         })
                                     break;
 
@@ -112,7 +113,8 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
                             case 200:
                                 res.status(200).json({
                                     Data: `Login Successfull, Phone number: ${PhoneNumber}.`,
-                                    UserData: message.DatabaseOptionalData
+                                    UserData: message.DatabaseOptionalData,
+                                    UserToken: message.UserToken
                                 })
                             break;
 
