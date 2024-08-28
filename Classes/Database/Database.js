@@ -145,10 +145,6 @@ export default class Database {
         }
     }
 
-    async ForgotPassword(ApiKey, {PhoneNumber: PhoneNumber, OTP: OTP}) {
-
-    }
-
     async SaveComment(ApiKey, { Name: Name, PhoneNumber: PhoneNumber, Email: Email, Subject: Subject, CommentMessage: CommentMessage }) {
         const VerifyAction = await this.#VerifyApiKey(ApiKey)
         const GeneratedCommentID = CommentID(1, 10000)
