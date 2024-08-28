@@ -2,6 +2,7 @@
 import express from "express";
 import csurf from "csurf";
 import Throttle from "express-throttle/lib/throttle.js";
+import JWT from "jsonwebtoken";
 
 // Import Package Classes
 const Router = express.Router();
@@ -18,6 +19,7 @@ import PasswordProtection from "../Classes/PasswordProtection/PasswordProtection
 import Notification from "../Modules/Notification.js";
 
 const Data = new Database();
+const { sign, verify } = JWT
 
 // POST user data and create user account and return user saved info to Front-end side
 Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) => {
@@ -229,6 +231,19 @@ Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, 
                 Data: `Types of all parameters should be string.`
             })
         }
+    }
+})
+
+Router.get('/get-info', Throttle({ "rate": "10/min" }), async (req, res, next) => {
+    const {ApiKey} = req.body
+    const {Auth} = req.headers
+    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
+
+    if (CompareApiKey == true) {
+        res.status(200).send({
+            UserData: verify(Auth, Config.Key)
+        })
+
     }
 })
 
