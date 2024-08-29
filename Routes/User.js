@@ -236,12 +236,12 @@ Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, 
 
 Router.get('/get-info', Throttle({ "rate": "10/min" }), async (req, res, next) => {
     const {ApiKey} = req.body
-    const {Auth} = req.headers
+    const {Authorization} = req.headers
     const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
 
     if (CompareApiKey == true) {
         res.status(200).send({
-            UserData: verify(Auth, Config.Key)
+            UserData: verify(Authorization, Config.Key)
         })
 
     }
