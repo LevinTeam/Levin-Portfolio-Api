@@ -184,7 +184,7 @@ Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, 
 
                                                 case 500:
                                                     res.status(500).json({
-                                                        Data: `An Error happened when Creatgin Comment.`
+                                                        Data: `An Error happened when Creating Comment.`
                                                     })
                                                 break;
 
