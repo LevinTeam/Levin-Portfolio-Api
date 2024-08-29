@@ -2,6 +2,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import { config } from "dotenv"; config();
+import cors from "cors"
 
 // Import Modules
 import Listen from "./Modules/Listen.js";
@@ -33,6 +34,9 @@ app.use(express.json())
 
 // Parse Cookies
 app.use(cookieParser())
+
+// Using CORS Headers
+app.use(cors())
 
 // Deploy Api Routes
 app.use(`/api/${Config.ApiVersion}/user`, User)
