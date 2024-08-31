@@ -155,8 +155,10 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
 
 // POST user comment and save it into database
 Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, next) => {
-    const {ApiKey, Name, PhoneNumber, Email, Subject, CommentMessage} = req.body
-    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
+    const {Name, PhoneNumber, Email, Subject, CommentMessage} = req.body
+    const {authorization} = req.headers
+    console.log(req.headers)
+    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, authorization)
 
     if (CompareApiKey == true) {
         if ((typeof Name && typeof Subject && typeof CommentMessage) == "string") {
