@@ -42,7 +42,7 @@ Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) =>
                                 switch (message.Status.Code) {
                                     case 201:
                                         res.status(201).json({
-                                            Data: `Account successfully created, Phone number: ${PhoneNumber}.`,
+                                            Data: `اکانت با شماره ${PhoneNumber} با موفقیت ساخته شد.`,
                                             UserData: message.UserData,
                                             UserToken: message.UserToken
                                         })
@@ -56,7 +56,7 @@ Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) =>
 
                                     case 400:
                                         res.status(400).json({
-                                            Data: `Account with Number -> ${PhoneNumber}, has been registred before.`
+                                            Data: `اکانتبا شماره ${PhoneNumber} قبلا در سایت ثبت نام شده است.`
                                         })
                                     break;
 
@@ -71,27 +71,27 @@ Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) =>
                             })
                         } else {
                             res.status(400).json({
-                                Data: `Password Length should be between 5 and 100 characters`,
+                                Data: `پسورد باید بین 5 تا 100 حرف باشد.`
                             })
                         }
                     } else {
                         res.status(400).json({
-                            Data: `Phone number Length should be between 10 and 13 characters`,
+                            Data: `شماره تلفن باید بین 10 تا 13 عدد باشد.`
                         })
                     }
                 } else {
                     res.status(400).json({
-                        Data: `Lastname Length should be between 3 and 20 characters`,
+                        Data: `نام خانوادگی باید بین 3 تا 20 حروف باشد.`,
                     })
                 }
             } else {
                 res.status(400).json({
-                    Data: `Firstname Length should be between 3 and 20 characters`,
+                    Data: `نام باید بین 3 تا 20 حروف باشد.`,
                 })
             }
         } else {
             res.status(400).json({
-                Data: `Type of parameters is incorrect`,
+                Data: `مقدار یکی از ورودی ها اشتباه است.`,
             })
         }
     }
@@ -114,7 +114,7 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
                         switch (message.Status.Code) {
                             case 200:
                                 res.status(200).json({
-                                    Data: `Login Successfull, Phone number: ${PhoneNumber}.`,
+                                    Data: `کاربر با شماره ${PhoneNumber} با موفقیت وارد شد.`,
                                     UserData: message.DatabaseOptionalData,
                                     UserToken: message.UserToken
                                 })
@@ -122,13 +122,13 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
 
                             case 404:
                                 res.status(404).json({
-                                    Data: `Password for ${PhoneNumber} Number is incorrect.`
+                                    Data: `پسورد اکانت ${PhoneNumber} اشتباه است.`
                                 })
                             break;
 
                             case 400:
                                 res.status(400).json({
-                                    Data: `Account with Number -> ${PhoneNumber}, not registred before.`
+                                    Data: `شماره ${PhoneNumber} تا کنون داخل سایت ثبت نام نکرده است.`
                                 })
                             break;
 
@@ -137,17 +137,17 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
                     })
                 } else {
                     res.status(404).json({
-                        Data: `Passowrd length should be between 5 and 100 characters.`
+                        Data: `پسورد باید بین 5 تا 100 حرف باشد.`
                     })
                 }
             } else {
                 res.status(404).json({
-                    Data: `Phone number should be between 10 and 13 characters.`
+                    Data: `شماره تلفن باید بین 10 تا 13 عدد باشد.`
                 })
             }
         } else {
             res.status(404).json({
-                Data: `Types of all parameters should be string.`
+                Data: `مقدار تمام ورودی باید رشته باشد.`
             })
         }
     }
@@ -194,42 +194,42 @@ Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, 
                                         })
                                     } else {
                                         res.status(404).json({
-                                            Data: `Comment Message should be between 20 and 1000 characters.`
+                                            Data: `متن نظر شما باید بین 20 تا 1000 حروف باشد.`
                                         })
                                     }
                                 } else {
                                     res.status(404).json({
-                                        Data: `Subject should be between 4 and 50 characters.`
+                                        Data: `موضوع نظر شما باید بین 4 تا 50 حروف باشد.`
                                     })
                                 }
                             } else {
                                 res.status(404).json({
-                                    Data: `Email is incorrect.`
+                                    Data: `ایمیل وارد شده اشتباه است.`
                                 })
                             }
                         } else {
                             res.status(404).json({
-                                Data: `Phone number should be between 10 and 13 characters and Email should be between 6 and 50 characters.`
+                                Data: `مقدار شماره تلفن یا ایمیل اشتباه است.`
                             })
                         }
                     } else {
                         res.status(404).json({
-                            Data: `Name should be between 3 and 30 characters.`
+                            Data: `نام باید بین 3 تا 30 حروف باشد.`
                         })
                     }
                 } else {
                     res.status(404).json({
-                        Data: `Types of all parameters should be string.`
+                        Data: `مقدار ورودی تمام اینپوت ها باید رشته باشد.`
                     })
                 }
             } else {
                 res.status(404).json({
-                    Data: `Email OR Phone Number is required.`
+                    Data: `حتما باید ایمیل یا شماره تلفن را وارد کنید.`
                 })
             }
         } else {
             res.status(404).json({
-                Data: `Types of all parameters should be string.`
+                Data: `مقدار ورودی تمام اینپوت ها باید رشته باشد.`
             })
         }
     }
