@@ -64,7 +64,6 @@ export default class Database {
                         DatabaseAction: null
                     }
                 })
-
                 return {
                     Status: {
                         Code: 201,
@@ -77,10 +76,10 @@ export default class Database {
                         UserFullName: `${FirstName} ${LastName}`
                     },
                     UserToken: (await this.#GetUserToken({
-                        PhoneNumber: UserData.PhoneNumber,
-                        FirstName: UserData.FirstName,
-                        LastName: UserData.LastName,
-                        FullName: `${UserData.FirstName} ${UserData.LastName}`
+                        PhoneNumber: (await Users.findOne({PhoneNumber: PhoneNumber})).PhoneNumber,
+                        FirstName: (await Users.findOne({PhoneNumber: PhoneNumber})).FirstName,
+                        LastName: (await Users.findOne({PhoneNumber: PhoneNumber})).LastName,
+                        FullName: `${(await Users.findOne({PhoneNumber: PhoneNumber})).FirstName} ${(await Users.findOne({PhoneNumber: PhoneNumber})).LastName}`
                     })),
                     DatabaseMessage: `✅ User Account ${PhoneNumber} Has Been Created Successfully`,
                     DatabaseAction: null
