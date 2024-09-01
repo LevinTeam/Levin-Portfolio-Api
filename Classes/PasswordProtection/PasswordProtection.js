@@ -41,12 +41,3 @@ export default class PasswordProtection {
     }
 
 }
-let a = 'APA-a-p165^*&%#'
-let b = '$2b$10$anXjU06.a1l51zPYUW/N2O..ZSb20q4MaWiFWlx.JDv4XXdzPFmEO'
-let c = '$2b$10$WK9WDLFlEtsPNdjITr7Zpeeeeo2HBqUOQ7GPX09WFar/z/l7jegly'
-// let t = await PasswordProtection.ReGeneratePassword('$2b$10$anXjU06.a1l51zPYUW/N2O..ZSb20q4MaWiFWlx.JDv4XXdzPFmEO')
-let s = await PasswordProtection.ComparePassword(b, c)
-let d = await PasswordProtection.ComparePassword(a, b)
-let e = await PasswordProtection.ComparePassword('APA-a-p165^*&%#', Config.Key)
-
-await console.log(s, d)
