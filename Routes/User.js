@@ -23,9 +23,9 @@ const { sign, verify } = JWT
 
 // POST user data and create user account and return user saved info to Front-end side
 Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) => {
-    const {ApiKey, FirstName, LastName, PhoneNumber, Password} = req.body
-
-    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
+    const {FirstName, LastName, PhoneNumber, Password} = req.body
+    const {authorization} = req.headers
+    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, authorization)
 
     if (CompareApiKey == true) {
         if ((typeof FirstName && typeof LastName && typeof PhoneNumber && typeof Password) == "string") {
@@ -99,9 +99,9 @@ Router.post('/create', Throttle({ "rate": "10/min" }), async (req, res, next) =>
 
 // POST user phone number and password and logging into user account and return user saved info to Front-end side
 Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => {
-    const {ApiKey, PhoneNumber, Password} = req.body
-
-    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
+    const {PhoneNumber, Password} = req.body
+    const {authorization} = req.headers
+    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, authorization)
 
     if (CompareApiKey == true) {
         if ((typeof PhoneNumber && typeof Password) == "string") {
@@ -157,7 +157,6 @@ Router.post('/login', Throttle({ "rate": "10/min" }), async (req, res, next) => 
 Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, next) => {
     const {Name, PhoneNumber, Email, Subject, CommentMessage} = req.body
     const {authorization} = req.headers
-    console.log(req.headers)
     const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, authorization)
 
     if (CompareApiKey == true) {
@@ -237,13 +236,12 @@ Router.post('/create-comment', Throttle({ "rate": "10/min" }), async (req, res, 
 })
 
 Router.get('/get-info', Throttle({ "rate": "10/min" }), async (req, res, next) => {
-    const {ApiKey} = req.body
-    const {Authorization} = req.headers
-    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, ApiKey)
+    const {authorization} = req.headers
+    const CompareApiKey = await PasswordProtection.ComparePassword(Config.Key, authorization)
 
     if (CompareApiKey == true) {
         res.status(200).send({
-            UserData: verify(Authorization, Config.Key)
+            UserData: verify(authorization, Config.Key)
         })
 
     }
